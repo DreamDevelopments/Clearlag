@@ -46,7 +46,7 @@ public class TPSTask extends TaskModule {
                 tpsCalculator = new InternalTPSYoinker();
 
             } catch (Exception e) {
-
+                e.printStackTrace();
                 Util.warning("Clearlag failed to use the internal TPS tracker during initialization. Reverted to estimation... (" + e.getMessage() + ")");
 
                 tpsCalculator = new EstimatedTPSCalculator();
@@ -177,8 +177,13 @@ public class TPSTask extends TaskModule {
 
         public InternalTPSYoinker() throws Exception {
 
-            Class<?> minecraftServerClazz = Class.forName("net.minecraft.server." + Util.getRawBukkitVersion() + ".MinecraftServer");
-
+            Class<?> minecraftServerClazz;
+            try {
+                minecraftServerClazz = Class.forName("net.minecraft.server." + Util.getRawBukkitVersion() + ".MinecraftServer");
+            }
+            catch (ClassNotFoundException e) {
+                minecraftServerClazz = Class.forName("net.minecraft.server.MinecraftServer");
+            }
             minecraftServerInstance = minecraftServerClazz.getDeclaredMethod("getServer").invoke(null);
 
             recentTpsField = minecraftServerClazz.getDeclaredField("recentTps");

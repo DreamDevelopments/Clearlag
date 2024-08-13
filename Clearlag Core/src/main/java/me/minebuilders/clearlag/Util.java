@@ -97,12 +97,19 @@ public class Util {
     }
 
     public static String getRawBukkitVersion() {
+        String[] v = Bukkit.getServer().getClass().getPackage().getName().split("\\.");
+        if(v.length < 4)
+            return "1.21";
         return Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
     }
 
     public static String getBukkitVersion() {
 
-        String[] v = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3].split("-")[0].split("_");
+        String[] a = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
+        if(a.length < 4)
+            return "1.21";
+
+        String[] v = a[3].split("-")[0].split("_");
 
         return v[0].replace("v", "") + "." + v[1];
     }

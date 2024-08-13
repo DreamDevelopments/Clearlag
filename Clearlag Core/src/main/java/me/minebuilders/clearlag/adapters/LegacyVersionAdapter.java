@@ -15,15 +15,31 @@ import java.lang.reflect.Method;
  */
 public class LegacyVersionAdapter implements VersionAdapter {
 
-    private static final Field itemField = ReflectionUtil.getField(
-            ReflectionUtil.getClass("org.bukkit.craftbukkit." + Util.getRawBukkitVersion() + ".entity", "CraftItem"),
-            "item"
-    );
+    static {
+        try {
+            itemField = ReflectionUtil.getField(
+                    ReflectionUtil.getClass("org.bukkit.craftbukkit." + Util.getRawBukkitVersion() + ".entity", "CraftItem"),
+                    "item"
+            );
+            mcItemSetAge = ReflectionUtil.getField(
+                    ReflectionUtil.getClass("net.minecraft.server." + Util.getRawBukkitVersion(), "EntityItem"),
+                    "age"
+            );
+        } catch(IllegalStateException e) {
+            itemField = ReflectionUtil.getField(
+                    ReflectionUtil.getClass("org.bukkit.craftbukkit.entity", "CraftItem"),
+                    "item"
+            );
+            mcItemSetAge = ReflectionUtil.getField(
+                    ReflectionUtil.getClass("net.minecraft.server", "EntityItem"),
+                    "age"
+            );
+        }
+    }
 
-    private static final Field mcItemSetAge = ReflectionUtil.getField(
-            ReflectionUtil.getClass("net.minecraft.server." + Util.getRawBukkitVersion(), "EntityItem"),
-            "age"
-    );
+    private static Field itemField;
+
+    private static Field mcItemSetAge;
 
     @Override
     public boolean isCompatible() {
